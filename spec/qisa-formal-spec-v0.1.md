@@ -152,7 +152,6 @@ All instructions begin with:
 
 **Format:**  
 `[u8 opcode]`  
-`[0x06]`  
 `[u32 qubit_id] (* For QMEASURE only)`  
 `[u32 classical_reg] (* For QMEASURE only)`
 
