@@ -2,5 +2,12 @@
 name = "q-isa"
 version = "0.1.0"
 edition = "2024"
+description = "Binary execution format for quantum transactions"
+authors = ["Soham Ghugare <soham.ghugare@gmail.com>"]
+keywords = ["quantum-computing", "quantum-technology", "q-isa", "quantum", "rust"]
+categories = ["development-tools"]
+license = "Apache-2.0"
+repository = "https://github.com/Intrico-Labs/qisa"
+readme = "README.md"
 
 [dependencies]
