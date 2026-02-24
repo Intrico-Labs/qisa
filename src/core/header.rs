@@ -10,7 +10,7 @@ pub const QISA_HEADER_SIZE: usize = 64;
 
 /// ## Header Structure
 /// **Note: Refer to the v0.1 specification for detailed architecture.** <br>
-/// The header structure does not contain magic bytes 
+/// The header structure does not contain magic bytes
 /// to avoid modification during compilation/runtime.
 pub struct Header {
     pub version: u16,
@@ -27,9 +27,23 @@ pub struct Header {
 
 impl Header {
     /// Internal constructor for Header
-    pub fn new(
-        logical_qubit_count: u32,
-        classical_register_count: u32,
+    pub fn new(logical_qubit_count: u32, classical_register_count: u32) -> Self {
+        Self {
+            version: QISA_VERSION,
+            flags: 0,
+            logical_qubit_count,
+            classical_register_count,
+            instruction_count: 0,
+            constant_pool_offset: 0,
+            instruction_stream_offset: 0,
+            constant_pool_size: 0,
+            instruction_stream_size: 0,
+            header_checksum: 0, // computed later
+        }
+    }
+
+    pub fn build(
+        &self,
         instruction_count: u64,
         constant_pool_offset: u64,
         instruction_stream_offset: u64,
@@ -37,16 +51,16 @@ impl Header {
         instruction_stream_size: u64,
     ) -> Self {
         Self {
-            version: QISA_VERSION,
-            flags: 0,
-            logical_qubit_count,
-            classical_register_count,
+            version: self.version,
+            flags: self.flags,
+            logical_qubit_count: self.logical_qubit_count,
+            classical_register_count: self.classical_register_count,
             instruction_count,
             constant_pool_offset,
             instruction_stream_offset,
             constant_pool_size,
             instruction_stream_size,
-            header_checksum: 0, // computed later
+            header_checksum: 0, // computed during serialize
         }
     }
 
@@ -65,7 +79,7 @@ impl Header {
         buffer[40..48].copy_from_slice(&self.constant_pool_size.to_le_bytes());
         buffer[48..56].copy_from_slice(&self.instruction_stream_size.to_le_bytes());
 
-        let checksum= fnv1a_64(&buffer[0..56]);
+        let checksum = fnv1a_64(&buffer[0..56]);
         buffer[56..64].copy_from_slice(&checksum.to_le_bytes());
 
         buffer
@@ -82,8 +96,7 @@ impl Header {
             return Err("Invalid magic bytes");
         }
 
-        let stored_checksum =
-            u64::from_le_bytes(bytes[56..64].try_into().unwrap());
+        let stored_checksum = u64::from_le_bytes(bytes[56..64].try_into().unwrap());
 
         let computed_checksum = fnv1a_64(&bytes[0..56]);
 
