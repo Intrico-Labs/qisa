@@ -3,7 +3,7 @@
 //! For example: A Rotational-X Instruction (RX) will require the rotation (theta) in order to execute.
 //!
 
-pub const CONST_ENTRY_SIZE: usize = 16;
+pub const QISA_CONST_ENTRY_SIZE: usize = 16;
 
 /// ## Constant Entry
 /// Size: 16 Bytes
@@ -19,8 +19,8 @@ pub enum ConstKind {
 }
 
 impl ConstEntry {
-    pub fn serialize(&self) -> [u8; CONST_ENTRY_SIZE] {
-        let mut buffer = [0u8; CONST_ENTRY_SIZE];
+    pub fn serialize(&self) -> [u8; QISA_CONST_ENTRY_SIZE] {
+        let mut buffer = [0u8; QISA_CONST_ENTRY_SIZE];
 
         match self.kind {
             ConstKind::F64(value) => {
@@ -33,7 +33,7 @@ impl ConstEntry {
     }
 
     pub fn parse(bytes: &[u8]) -> Result<Self, &'static str> {
-        if bytes.len() != CONST_ENTRY_SIZE {
+        if bytes.len() != QISA_CONST_ENTRY_SIZE {
             return Err("Invalid constant entry size");
         }
 
