@@ -16,7 +16,7 @@ pub struct Program {
 }
 
 impl Program {
-    pub fn to_bytes(&self) -> Vec<u8> {
+    pub fn compile_to_bytes(&self) -> Vec<u8> {
         let mut buffer = Vec::new();
 
         // Placeholder for building header later on

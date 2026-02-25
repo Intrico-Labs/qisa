@@ -13,7 +13,7 @@ pub struct Footer {
 impl Footer {
     pub fn new(&self) -> Self {
         Self {
-            program_checksum: 0,
+            program_checksum: 0, // will be calculated while building Program
             reserved: 0,
         }
     }
