@@ -9,3 +9,12 @@ pub struct Footer {
     pub program_checksum: u64,
     pub reserved: u64,
 }
+
+impl Footer {
+    pub fn new(&self) -> Self {
+        Self {
+            program_checksum: 0,
+            reserved: 0,
+        }
+    }
+}
