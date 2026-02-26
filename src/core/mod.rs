@@ -5,4 +5,5 @@ pub mod constant;
 pub mod footer;
 pub mod header;
 pub mod instruction;
+pub mod opcodes;
 pub mod program;
