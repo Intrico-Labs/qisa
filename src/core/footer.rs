@@ -18,11 +18,7 @@ impl Footer {
 
     pub fn parse(bytes: &[u8]) -> Self {
         Self {
-            program_checksum: u64::from_le_bytes(
-                bytes[(bytes.len() - 16)..(bytes.len() - 8)]
-                    .try_into()
-                    .unwrap(),
-            ),
+            program_checksum: u64::from_le_bytes(bytes[0..8].try_into().unwrap()),
             reserved: 0,
         }
     }
