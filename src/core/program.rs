@@ -106,7 +106,7 @@ impl Program {
             let ops = Instruction::operand_count(&bytes[instr_idx]);
 
             if let Some(v) = ops {
-                let instr = Instruction::parse(&bytes[instr_idx..(2 * v as usize)])?;
+                let instr = Instruction::parse(&bytes[instr_idx..(instr_idx + 2 * v as usize)])?;
                 instructions.push(instr);
                 instr_idx += 1 + (2 * v) as usize;
             } else {
