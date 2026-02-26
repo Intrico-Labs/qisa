@@ -1,10 +1,6 @@
 use crate::{
-    core::{
-        constant::{ConstEntry, QISA_CONST_ENTRY_SIZE},
-        footer::{Footer, QISA_FOOTER_SIZE},
-        header::{Header, QISA_HEADER_SIZE},
-        instruction::Instruction,
-    },
+    constants::{QISA_CONST_ENTRY_SIZE, QISA_FOOTER_SIZE, QISA_HEADER_SIZE},
+    core::{constant::ConstEntry, footer::Footer, header::Header, instruction::Instruction},
     utils::fnv1a_64,
 };
 
@@ -50,7 +46,7 @@ impl Program {
 
         // ---------------------------
         // Build Header
-        // ---------------------------
+        // --------------------------
         let header = self.header.build(
             self.instructions.len() as u64,
             const_pool_offset,
@@ -68,5 +64,67 @@ impl Program {
         buffer[footer_offset..footer_offset + 8].copy_from_slice(&program_checksum.to_le_bytes());
 
         buffer
+    }
+
+    pub fn parse_from_bytes(bytes: &[u8]) -> Result<Self, &'static str> {
+        // Validate program checksum from footer
+        let stored_checksum = u64::from_le_bytes(
+            bytes[(bytes.len() - 16)..(bytes.len() - 8)]
+                .try_into()
+                .unwrap(),
+        );
+
+        let computed_checksum = fnv1a_64(&bytes[..(bytes.len() - 16)]);
+
+        if stored_checksum != computed_checksum {
+            return Err("Program checksum mismatch");
+        }
+
+        // Parse Header
+        let header = Header::parse(&bytes[0..QISA_HEADER_SIZE])?;
+
+        // Parse Constants
+        let mut constants: Vec<ConstEntry> = Vec::new();
+        let const_count = header.constant_pool_size / QISA_CONST_ENTRY_SIZE as u64;
+
+        for c in 0..const_count {
+            let const_idx =
+                header.constant_pool_offset as usize + c as usize * QISA_CONST_ENTRY_SIZE;
+            let const_end = const_idx + QISA_CONST_ENTRY_SIZE;
+            let const_entry = ConstEntry::parse(&bytes[const_idx..const_end])?;
+            constants.push(const_entry);
+        }
+
+        // Parse Instructions
+        let mut instructions: Vec<Instruction> = Vec::new();
+        let mut instr_parsed = 0;
+        let mut instr_idx = header.instruction_stream_offset as usize;
+
+        while instr_parsed < header.instruction_count {
+            // Fetch the operand count for that instruction
+            let ops = Instruction::operand_count(&bytes[instr_idx]);
+
+            if let Some(v) = ops {
+                let instr = Instruction::parse(&bytes[instr_idx..(2 * v as usize)])?;
+                instructions.push(instr);
+                instr_idx += 1 + (2 * v) as usize;
+            } else {
+                let instr = Instruction::parse(&bytes[..instr_idx])?;
+                instructions.push(instr);
+                instr_idx += 1;
+            }
+
+            instr_parsed += 1;
+        }
+
+        // Parse Footer
+        let footer = Footer::parse(&bytes[(bytes.len() - 16)..(bytes.len() - 8)]);
+
+        Ok(Self {
+            header,
+            constants,
+            instructions: instructions,
+            footer: footer,
+        })
     }
 }
