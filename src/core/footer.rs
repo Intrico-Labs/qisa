@@ -3,6 +3,7 @@
 //! and other optional metadata (reserved bytes)
 //!
 
+#[derive(Debug)]
 pub struct Footer {
     pub program_checksum: u64,
     pub reserved: u64,

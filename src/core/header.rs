@@ -11,6 +11,7 @@ use crate::{
 /// **Note: Refer to the v0.1 specification for detailed architecture.** <br>
 /// The header structure does not contain magic bytes
 /// to avoid modification during compilation/runtime.
+#[derive(Debug)]
 pub struct Header {
     pub version: u16,
     pub flags: u16,

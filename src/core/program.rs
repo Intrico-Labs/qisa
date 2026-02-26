@@ -4,6 +4,7 @@ use crate::{
     utils::fnv1a_64,
 };
 
+#[derive(Debug)]
 pub struct Program {
     pub header: Header,
     pub constants: Vec<ConstEntry>,
