@@ -102,24 +102,14 @@ impl Program {
         let mut instr_idx = header.instruction_stream_offset as usize;
 
         while instr_parsed < header.instruction_count {
-            // Fetch the operand count for that instruction
-            let ops = Instruction::operand_count(&bytes[instr_idx]);
-
-            if let Some(v) = ops {
-                let instr = Instruction::parse(&bytes[instr_idx..(instr_idx + 2 * v as usize)])?;
-                instructions.push(instr);
-                instr_idx += 1 + (2 * v) as usize;
-            } else {
-                let instr = Instruction::parse(&bytes[..instr_idx])?;
-                instructions.push(instr);
-                instr_idx += 1;
-            }
-
+            let instr = Instruction::parse(&bytes[instr_idx..])?;
+            instr_idx += instr.byte_size();
+            instructions.push(instr);
             instr_parsed += 1;
         }
 
         // Parse Footer
-        let footer = Footer::parse(&bytes[(bytes.len() - 16)..(bytes.len() - 8)]);
+        let footer = Footer::parse(&bytes[(bytes.len() - 16)..]);
 
         Ok(Self {
             header,
