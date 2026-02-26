@@ -2,11 +2,10 @@
 //! The header is present at the start of the binary file and contains all the
 //! necessary metadata of the instructions and constants present in the file.
 
-use crate::utils::fnv1a_64;
-
-pub const QISA_MAGIC_BYTES: u32 = 0x4155544D;
-pub const QISA_VERSION: u16 = 0x0001;
-pub const QISA_HEADER_SIZE: usize = 64;
+use crate::{
+    constants::{QISA_HEADER_SIZE, QISA_MAGIC_BYTES, QISA_VERSION},
+    utils::fnv1a_64,
+};
 
 /// ## Header Structure
 /// **Note: Refer to the v0.1 specification for detailed architecture.** <br>

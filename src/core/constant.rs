@@ -3,7 +3,7 @@
 //! For example: A Rotational-X Instruction (RX) will require the rotation (theta) in order to execute.
 //!
 
-pub const QISA_CONST_ENTRY_SIZE: usize = 16;
+use crate::constants::QISA_CONST_ENTRY_SIZE;
 
 /// ## Constant Entry
 /// Size: 16 Bytes

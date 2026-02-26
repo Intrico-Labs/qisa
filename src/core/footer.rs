@@ -3,8 +3,6 @@
 //! and other optional metadata (reserved bytes)
 //!
 
-pub const QISA_FOOTER_SIZE: usize = 16;
-
 pub struct Footer {
     pub program_checksum: u64,
     pub reserved: u64,
