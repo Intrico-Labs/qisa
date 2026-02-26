@@ -1,6 +1,6 @@
 [package]
 name = "qisa"
-version = "0.1.4"
+version = "0.1.5"
 edition = "2024"
 description = "Binary execution format for quantum transactions"
 authors = ["Soham Ghugare <soham.ghugare@gmail.com>"]
