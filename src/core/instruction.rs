@@ -221,10 +221,10 @@ impl Instruction {
         }
     }
 
-    pub fn operand_count(opcode: u8) -> Option<u8> {
+    pub fn operand_count(opcode: &u8) -> Option<u8> {
         OPCODE_MAP
             .iter()
-            .find(|(_, op, _)| *op == opcode)
+            .find(|(_, op, _)| *op == *opcode)
             .map(|(_, _, count)| *count)
     }
 }
