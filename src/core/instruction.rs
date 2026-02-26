@@ -221,6 +221,29 @@ impl Instruction {
         }
     }
 
+    pub fn byte_size(&self) -> usize {
+        match self {
+            Instruction::QInit { .. }
+            | Instruction::H { .. }
+            | Instruction::X { .. }
+            | Instruction::Y { .. }
+            | Instruction::Z { .. } => 5, // 1 (opcode) + 4 (u32)
+
+            Instruction::RX { .. }
+            | Instruction::RY { .. }
+            | Instruction::RZ { .. } => 13, // 1 (opcode) + 4 (u32) + 8 (u64)
+
+            Instruction::CNOT { .. }
+            | Instruction::SWAP { .. }
+            | Instruction::CPHASE { .. }
+            | Instruction::Measure { .. } => 9, // 1 (opcode) + 4 (u32) + 4 (u32)
+
+            Instruction::Wait { .. } => 9, // 1 (opcode) + 8 (u64)
+
+            Instruction::Barrier | Instruction::MeasureAll | Instruction::QEnd => 1,
+        }
+    }
+
     pub fn operand_count(opcode: &u8) -> Option<u8> {
         OPCODE_MAP
             .iter()
