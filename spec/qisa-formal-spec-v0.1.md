@@ -125,12 +125,23 @@ All instructions begin with:
 | :---: | :---: |
 | 0x20 | QCNOT |
 | 0x21 | QSWAP |
+
+**Format:**
+`[u8 opcode]`
+`[u32 q1]`
+`[u32 q2]`
+
+### **Two-Qubit Parameterized**
+
+| Opcode | Mnemonic |
+| :---: | :---: |
 | 0x22 | QCPHASE |
 
-**Format:**  
-`[u8 opcode]`  
-`[u32 q1]`  
+**Format:**
+`[u8 opcode]`
+`[u32 q1]`
 `[u32 q2]`
+`[u64 const_index]`
 
 ### **Synchronization**
 
