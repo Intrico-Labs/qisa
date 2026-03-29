@@ -20,7 +20,7 @@ pub enum Instruction {
     // Two-qubit
     CNOT { control: u32, target: u32 },
     SWAP { q1: u32, q2: u32 },
-    CPHASE { q1: u32, q2: u32 },
+    CPHASE { q1: u32, q2: u32, const_index: u64 },
 
     // Synchronization
     Barrier,
@@ -84,10 +84,11 @@ impl Instruction {
                 buffer.extend_from_slice(&q1.to_le_bytes());
                 buffer.extend_from_slice(&q2.to_le_bytes());
             }
-            Instruction::CPHASE { q1, q2 } => {
+            Instruction::CPHASE { q1, q2, const_index } => {
                 buffer.push(OP_CPHASE);
                 buffer.extend_from_slice(&q1.to_le_bytes());
                 buffer.extend_from_slice(&q2.to_le_bytes());
+                buffer.extend_from_slice(&const_index.to_le_bytes());
             }
             Instruction::Barrier => {
                 buffer.push(OP_BARRIER);
@@ -192,12 +193,13 @@ impl Instruction {
                 Ok(Instruction::SWAP { q1, q2 })
             }
             OP_CPHASE => {
-                if bytes.len() < 9 {
+                if bytes.len() < 17 {
                     return Err("not enough bytes for CPHASE");
                 }
                 let q1 = u32::from_le_bytes(bytes[1..5].try_into().unwrap());
                 let q2 = u32::from_le_bytes(bytes[5..9].try_into().unwrap());
-                Ok(Instruction::CPHASE { q1, q2 })
+                let const_index = u64::from_le_bytes(bytes[9..17].try_into().unwrap());
+                Ok(Instruction::CPHASE { q1, q2, const_index })
             }
             OP_BARRIER => Ok(Instruction::Barrier),
             OP_WAIT => {
@@ -235,8 +237,9 @@ impl Instruction {
 
             Instruction::CNOT { .. }
             | Instruction::SWAP { .. }
-            | Instruction::CPHASE { .. }
             | Instruction::Measure { .. } => 9, // 1 (opcode) + 4 (u32) + 4 (u32)
+
+            Instruction::CPHASE { .. } => 17, // 1 (opcode) + 4 (u32) + 4 (u32) + 8 (u64)
 
             Instruction::Wait { .. } => 9, // 1 (opcode) + 8 (u64)
 
