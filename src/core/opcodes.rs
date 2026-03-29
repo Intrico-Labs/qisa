@@ -32,7 +32,7 @@ define_opcodes! {
     // Two-qubit
     OP_CNOT        => (0x20, 2),
     OP_SWAP        => (0x21, 2),
-    OP_CPHASE      => (0x22, 2),
+    OP_CPHASE      => (0x22, 3),
 
     // Synchronization
     OP_BARRIER     => (0x30, 0),
